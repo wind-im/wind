@@ -11,5 +11,5 @@ func main() {
 	})
 
     fmt.Println("wind-im listen on *:80")
-	http.ListenAndServe(":80", nil)
+	http.ListenAndServe("0.0.0.0:80", nil)
 }

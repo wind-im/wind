@@ -1,58 +1,46 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
-	"os"
+	"net/http"
 
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
-	_ "github.com/wind-im/wind/internal/dao"
+	"github.com/wind-im/wind/internal/controller"
 )
 
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("Error loading .env file, err= ", err)
 	}
-	s3Bucket := os.Getenv("S3_BUCKET")
-	secretKey := os.Getenv("SECRET_KEY")
-	fmt.Println(s3Bucket)
-	fmt.Println(secretKey)
-
 }
 
 func main() {
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
-	//    fmt.Println("load .env")
-	// // Configure the database connection (always check errors)
-	// db, err := sql.Open("mysql", "root:my-secret-pw@(127.0.0.1:3306)/db?parseTime=true")
-	//
-	//    if err != nil {
-	//        fmt.Println(err)
-	//    }
-	//
-	// // Initialize the first connection to the database, to see if everything works correctly.
-	// // Make sure to check the error.
-	// err = db.Ping()
-	//    if err != nil {
-	//        fmt.Println(err)
-	//    }
-	//
-	//    query := `
-	//    CREATE TABLE users (
-	//        id INT AUTO_INCREMENT,
-	//        username TEXT NOT NULL,
-	//        password TEXT NOT NULL,
-	//        created_at DATETIME,
-	//        PRIMARY KEY (id)
-	//    );`
-	//    _, err = db.Exec(query)
-	//    if err != nil {
-	//        fmt.Println(err)
-	//    }
+	// todo : learn how to handle panic
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Recovered. Error:\n", r)
+			}
+		}()
+		panic("a panic")
+	}()
+	flag.Parse()
+	log.SetFlags(0)
+	fmt.Println("wind-im running...")
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+	r.GET("/echo", controller.Echo)
+	r.GET("/", controller.Home)
+	log.Fatal(r.Run(*controller.Addr))
 
+	r.Run() // listen and serve on 0.0.0.0:8080
 }

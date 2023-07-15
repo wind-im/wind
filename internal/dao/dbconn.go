@@ -25,5 +25,5 @@ func init() {
 	if err := EntClient.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
-    fmt.Println("db connection init", EntClient)
+    fmt.Printf("db connection init: %+v\n", EntClient)
 }

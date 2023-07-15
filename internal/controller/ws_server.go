@@ -21,7 +21,6 @@ func Echo(ctx *gin.Context) {
 		log.Println("upgrade:", err)
 		return
 	}
-    // what if panic?
 	defer c.Close()
 	for {
 		mt, message, err := c.ReadMessage()

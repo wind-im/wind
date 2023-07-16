@@ -17,3 +17,4 @@
 # db stuff
 *.db
 *test
+/node_modules

@@ -33,3 +33,10 @@ func TestSelect(t *testing.T) {
 //     // hub.onEvent <- &WsMsg{"chat", "msg body"} 
 //     
 // }
+
+func TestWs(t *testing.T) {
+    hub := New()
+    hub.Emit
+    hub.On("chat", )
+
+}

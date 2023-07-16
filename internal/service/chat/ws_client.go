@@ -23,7 +23,7 @@ type Client struct {
 	conn *websocket.Conn
 
 	// Buffered channel of outbound messages.
-	send chan WsMsg
+	sendBuf chan WsMsg
 }
 
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
@@ -32,7 +32,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan WsMsg, 256)}
+	client := &Client{hub: hub, conn: conn, sendBuf: make(chan WsMsg, 256)}
 	client.hub.register <- client
 
     // handle reader and writer in new individual goroutine
@@ -78,11 +78,12 @@ func (c *Client) write() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
+        // clean client's event map on hub
 		c.conn.Close()
 	}()
 	for {
 		select {
-		case message, ok := <-c.send:
+		case message, ok := <-c.sendBuf:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The hub closed the channel.
@@ -98,9 +99,9 @@ func (c *Client) write() {
 			w.Write(msgInBytes)
 
             // handle queued messages for performance
-			n := len(c.send)
+			n := len(c.sendBuf)
 			for i := 0; i < n; i++ {
-				message := <-c.send
+				message := <-c.sendBuf
 				msgInBytes, _ := json.Marshal(message)
 				w.Write(msgInBytes)
 			}

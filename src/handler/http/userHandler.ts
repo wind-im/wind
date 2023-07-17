@@ -1,4 +1,4 @@
-import { respCode, responseType } from './../../types/response'
+import { respCode, ResponseType } from './../../types/response'
 import { onlineHeartbeat } from '@/service/user/userService'
 
 export function whoami (req, res, next) {
@@ -21,7 +21,7 @@ export function whoami (req, res, next) {
 
 export function onlineHeartbeatGet (req, res, next) {
   try {
-    let resp: responseType
+    let resp: ResponseType
     if (!req.windImUser) {
       resp = {
         code: respCode.sysError

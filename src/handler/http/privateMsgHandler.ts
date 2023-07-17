@@ -1,12 +1,12 @@
 import { getUserByEmail, getUserByUsernameAndTag } from '@/service/friend/friendService'
-import { getAllPrivateMsg, createPrivateMsg, getPrivateMsgById } from '@/service/msg/msgService'
+import { selectAllPrivateMsgByUid, createPrivateMsg, getPrivateMsgById } from '@/service/msg/msgService'
 import * as Boom from '@hapi/boom'
 
 // get private msg list
 export async function privateMsgListGet (req, res, next) {
   try {
     const user = req.windImUser
-    const wrappedData = wrapPrivateMsg(user.id, await getAllPrivateMsg(user.id))
+    const wrappedData = wrapPrivateMsg(user.id, await selectAllPrivateMsgByUid(user.id))
     res.json({ data: wrappedData })
   } catch (e) {
     next(e)

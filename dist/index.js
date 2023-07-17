@@ -70,7 +70,7 @@ var Boom = __importStar(require("@hapi/boom"));
 var cors_1 = __importDefault(require("cors"));
 var msgHandler_1 = require("./handler/ws/msgHandler");
 var authUtils_1 = require("./utils/authUtils");
-var privateMsgHandler_1 = require("./handler/http/privateMsgHandler");
+var msgHandler = __importStar(require("./handler/http/privateMsgHandler"));
 var userHandler_1 = require("./handler/http/userHandler");
 var errorHandler_1 = require("./handler/http/errorHandler");
 var loginHandler_1 = require("./handler/http/loginHandler");
@@ -107,9 +107,9 @@ app.use((0, cors_1["default"])(corsOptions))
     next(Boom.forbidden('hello Boom'));
 })
     .get('/api/whoami', authUtils_1.loginValidator, userHandler_1.whoami)
-    .get('/api/msg/privateMsgList', authUtils_1.loginValidator, privateMsgHandler_1.privateMsgListGet)
-    .get('/api/msg/privateMsg', authUtils_1.loginValidator, privateMsgHandler_1.privateMsgGet)
-    .post('/api/msg/privateMsg', authUtils_1.loginValidator, privateMsgHandler_1.privateMsgPost)
+    .get('/api/msg/privateMsgList', authUtils_1.loginValidator, msgHandler.privateMsgListGet)
+    .get('/api/msg/privateMsg', authUtils_1.loginValidator, msgHandler.privateMsgGet)
+    .post('/api/msg/privateMsg', authUtils_1.loginValidator, msgHandler.privateMsgPost)
     .post('/api/login', loginHandler_1.loginPost)
     .post('/api/signup', signupHandler_1.signupPost)
     .post('/api/logout', authUtils_1.loginValidator, logoutHandler_1.logoutPost)

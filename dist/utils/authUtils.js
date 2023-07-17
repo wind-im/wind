@@ -120,7 +120,7 @@ var loginValidator = function (req, res, next) { return __awaiter(void 0, void 0
                 return [3 /*break*/, 3];
             case 2:
                 e_2 = _a.sent();
-                console.error(e_2);
+                console.error("#login validator error, e=", e_2);
                 next(e_2);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];

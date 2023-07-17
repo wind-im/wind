@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.getPrivateMsgById = exports.getAllPrivateMsg = exports.getExistedPrivateMsg = exports.fetchAllMissedPrivateMsg = exports.persistPrivateMsg = exports.getDestUserOfPrivateMsg = exports.createPrivateMsg = void 0;
+exports.getPrivateMsgById = exports.selectAllPrivateMsgByUid = exports.getExistedPrivateMsg = exports.fetchAllMissedPrivateMsg = exports.persistPrivateMsg = exports.getDestUserOfPrivateMsg = exports.createPrivateMsg = void 0;
 var prismaHolder_1 = require("../../utils/prismaHolder");
 var privateMsgType = 0;
 function createPrivateMsg(fromUid, toUid) {
@@ -222,7 +222,7 @@ function getExistedPrivateMsg(fromUid, toUid) {
     });
 }
 exports.getExistedPrivateMsg = getExistedPrivateMsg;
-function getAllPrivateMsg(uid) {
+function selectAllPrivateMsgByUid(uid) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -247,7 +247,7 @@ function getAllPrivateMsg(uid) {
         });
     });
 }
-exports.getAllPrivateMsg = getAllPrivateMsg;
+exports.selectAllPrivateMsgByUid = selectAllPrivateMsgByUid;
 function getPrivateMsgById(msgId) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

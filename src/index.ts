@@ -8,7 +8,7 @@ import cors from 'cors'
 
 import { SocketData, wsAuthMiddleware, wsOnConnect } from '@/handler/ws/msgHandler'
 import { loginValidator } from './utils/authUtils'
-import { privateMsgGet, privateMsgListGet, privateMsgPost } from './handler/http/privateMsgHandler'
+import * as msgHandler from './handler/http/privateMsgHandler'
 import { batchCheckUserOnlineGet, onlineHeartbeatGet, whoami } from './handler/http/userHandler'
 import { errorHandler } from './handler/http/errorHandler'
 import { loginPost } from './handler/http/loginHandler'
@@ -18,8 +18,9 @@ import cookieParser from 'cookie-parser'
 import { logoutPost } from './handler/http/logoutHandler'
 import { friendReqGet, friendReqPost } from './handler/http/friendReqhandler'
 import { friendGet, onlineFriendsGet } from './handler/http/friendHandler'
-import { channelListGet, channelJoinPost, channelPost, channelUserInfo, channelDelete, channelGet, beOnlineInChannel, beOfflineInChannel, channelInviteGet } from './handler/http/channelHandler'
+import { channelListGet, channelJoinPost, channelPost, channelUserInfoGet, channelDelete, channelGet, beOnlineInChannel, beOfflineInChannel, channelInviteGet } from './handler/http/channelHandler'
 import { roomGet, roomListGet } from './handler/http/roomMsgHandler'
+import { testPromiseWithTs } from './service/user/userService'
 
 dotenv.config()
 const FRONTEND_HOST = process.env.FRONTEND_HOST
@@ -49,9 +50,9 @@ app.use(cors(corsOptions))
     next(Boom.forbidden('hello Boom'))
   })
   .get('/api/whoami', loginValidator, whoami)
-  .get('/api/msg/privateMsgList', loginValidator, privateMsgListGet)
-  .get('/api/msg/privateMsg', loginValidator, privateMsgGet)
-  .post('/api/msg/privateMsg', loginValidator, privateMsgPost)
+  .get('/api/msg/privateMsgList', loginValidator, msgHandler.privateMsgListGet)
+  .get('/api/msg/privateMsg', loginValidator, msgHandler.privateMsgGet)
+  .post('/api/msg/privateMsg', loginValidator, msgHandler.privateMsgPost)
   .post('/api/login', loginPost)
   .post('/api/signup', signupPost)
   .post('/api/logout', loginValidator, logoutPost)
@@ -63,7 +64,7 @@ app.use(cors(corsOptions))
   .get('/api/channel', loginValidator, channelGet)
   .get('/api/channelList', loginValidator, channelListGet)
   .post('/api/channel/join', loginValidator, channelJoinPost)
-  .get('/api/channel/channelUserInfo', loginValidator, channelUserInfo)
+  .get('/api/channel/channelUserInfo', loginValidator, channelUserInfoGet)
   .post('/api/channel/delete', loginValidator, channelDelete)
   .get('/api/roomList', loginValidator, roomListGet)
   .get('/api/room', loginValidator, roomGet)
@@ -77,6 +78,9 @@ app.use(cors(corsOptions))
   .get('/api/onlineHeartbeat', loginValidator, onlineHeartbeatGet)
   .get('/api/batchCheckUserOnline', loginValidator, batchCheckUserOnlineGet)
   .get('/api/channelInviteUrl', loginValidator, channelInviteGet)
+  .get('/api/ts', loginValidator, async (req, res) => {
+    res.json({data: await testPromiseWithTs()})
+  })
 
   .use(errorHandler) // for handling global error
 

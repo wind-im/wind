@@ -54,7 +54,7 @@ export const loginValidator = async (req, res, next) => {
     req.windImUser = user
     next()
   } catch (e) {
-    console.error(e)
+    console.error("#login validator error, e=", e)
     next(e)
   }
 }

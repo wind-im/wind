@@ -64,7 +64,7 @@ export async function channelListGet(req, res, next) {
 }
 
 // get all crew by channelId
-export async function channelUserInfo(req, res, next) {
+export async function channelUserInfoGet(req, res, next) {
   try {
     console.log('channelMembersGet req:' + JSON.stringify(req.query))
     const user = req.windImUser

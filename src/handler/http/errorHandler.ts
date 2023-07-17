@@ -4,10 +4,9 @@ const loginErrorCode = 403
 const loginErrorMsg = 'Please login first.'
 
 export function errorHandler (err, req, res, next) {
-  console.error(err)
-  // 如果是一个 Boom 异常，则根据 Boom 异常结构修改 `res`
+  console.error("#errorHandler, e=", err)
   if (Boom.isBoom(err)) {
-    // login error
+    // boom login error
     if (err.output.payload.statusCode == loginErrorCode) {
       res.status(loginErrorCode)
       res.json({
@@ -23,6 +22,7 @@ export function errorHandler (err, req, res, next) {
       })
     }
   } else {
+    // not boom error
     res.status(500)
     res.json({
       error: err,

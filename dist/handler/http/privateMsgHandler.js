@@ -74,7 +74,7 @@ function privateMsgListGet(req, res, next) {
                     user = req.windImUser;
                     _a = wrapPrivateMsg;
                     _b = [user.id];
-                    return [4 /*yield*/, (0, msgService_1.getAllPrivateMsg)(user.id)];
+                    return [4 /*yield*/, (0, msgService_1.selectAllPrivateMsgByUid)(user.id)];
                 case 1:
                     wrappedData = _a.apply(void 0, _b.concat([_c.sent()]));
                     res.json({ data: wrappedData });

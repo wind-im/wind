@@ -62,7 +62,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.batchCheckUserOnline = exports.getChannelOnlineInfo = exports.buildChannelOnlineUserskey = exports.becomeOfflineInChannel = exports.becomeOnlineInChannel = exports.onlineHeartbeat = exports.signup = exports.queryUserById = void 0;
+exports.testPromiseWithTs = exports.batchCheckUserOnline = exports.getChannelOnlineInfo = exports.buildChannelOnlineUserskey = exports.becomeOfflineInChannel = exports.becomeOnlineInChannel = exports.onlineHeartbeat = exports.signup = exports.queryUserById = void 0;
 var prismaHolder_1 = require("../../utils/prismaHolder");
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var Boom = __importStar(require("@hapi/boom"));
@@ -261,3 +261,14 @@ function batchCheckUserOnline(uidList) {
     });
 }
 exports.batchCheckUserOnline = batchCheckUserOnline;
+function testPromiseWithTs() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, {
+                    name: "sawyer",
+                    age: 11
+                }];
+        });
+    });
+}
+exports.testPromiseWithTs = testPromiseWithTs;

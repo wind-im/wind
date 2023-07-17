@@ -130,7 +130,7 @@ export async function getExistedPrivateMsg (fromUid, toUid) {
   })
 }
 
-export async function getAllPrivateMsg (uid) {
+export async function selectAllPrivateMsgByUid (uid: number) {
   return await prisma.privateMsg.findMany({
     where: {
       OR: [

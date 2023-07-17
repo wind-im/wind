@@ -5,7 +5,7 @@ import { redis } from 'utils/redisHolder'
 
 const userOnlineRedisVal = 'true'
 
-export async function queryUserById (id:number) {
+export async function queryUserById(id: number) {
   return await prisma.user.findUnique({
     where: {
       id
@@ -13,7 +13,7 @@ export async function queryUserById (id:number) {
   })
 }
 
-export async function signup (email:string, username: string, pwd: string) {
+export async function signup(email: string, username: string, pwd: string) {
   checkSignupParam(email, username, pwd)
   const tag = await generateUserTag(username)
   if (!tag) {
@@ -35,7 +35,7 @@ export async function signup (email:string, username: string, pwd: string) {
   return created
 }
 
-function checkSignupParam (email: string, username: string, pwd: string) {
+function checkSignupParam(email: string, username: string, pwd: string) {
   if (!email ||
     !username ||
     !pwd ||
@@ -55,7 +55,7 @@ function checkSignupParam (email: string, username: string, pwd: string) {
 }
 
 // tag format: 0000-9999
-async function generateUserTag (username: string) {
+async function generateUserTag(username: string) {
   if (!username) {
     return
   }
@@ -78,40 +78,40 @@ async function generateUserTag (username: string) {
 }
 
 // become online status（global）
-export async function onlineHeartbeat (id) {
+export async function onlineHeartbeat(id) {
   const userOnlineKey = buildUserOnlineKey(id)
   await redis.set(userOnlineKey, userOnlineRedisVal, 'EX', 30) // after 30s, become offline automatically
 }
 
-function buildUserOnlineKey (id) {
+function buildUserOnlineKey(id) {
   return `user-${id}-online`
 }
 
 // become online status in a channel
-export async function becomeOnlineInChannel (uid, channelId) {
+export async function becomeOnlineInChannel(uid, channelId) {
   const channelOnlineUsersKey = buildChannelOnlineUserskey(channelId)
   redis.sadd(channelOnlineUsersKey, uid)
 }
 
 // become offline status in a channel
-export async function becomeOfflineInChannel (uid, channelId) {
+export async function becomeOfflineInChannel(uid, channelId) {
   const channelOnlineUsersKey = buildChannelOnlineUserskey(channelId)
   redis.srem(channelOnlineUsersKey, uid)
 }
 
-export function buildChannelOnlineUserskey (channelId: number) {
+export function buildChannelOnlineUserskey(channelId: number) {
   return `channel-${channelId}-onlineUsers`
 }
 
 // get channel online info
-export async function getChannelOnlineInfo (channelId) {
+export async function getChannelOnlineInfo(channelId) {
   const channelOnlineUsersKey = buildChannelOnlineUserskey(channelId)
   // const onlineUserCnt = await redis.scard(channelOnlineUsersKey) // get element count of a set
   return await redis.smembers(channelOnlineUsersKey)
 }
 
 // batch check if user is online
-export async function batchCheckUserOnline (uidList) {
+export async function batchCheckUserOnline(uidList) {
   const pipeline = redis.pipeline()
   uidList.forEach(uid => {
     const userOnlineKey = buildUserOnlineKey(uid)
@@ -125,4 +125,16 @@ export async function batchCheckUserOnline (uidList) {
     }
   })
   return onlineUidList
+}
+
+type Person = {
+  name: string, 
+  age: number
+}
+
+export async function testPromiseWithTs(): Promise<Person>{
+  return {
+    name: "sawyer",
+    age: 11
+  }
 }

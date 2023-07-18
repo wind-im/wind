@@ -79,7 +79,7 @@ export async function wsOnConnect (socket) {
     console.log(email + ' disconnected. for reason:' + reason)
   })
   // if it's private msg, then send all missed direct msg
-  if (privateMsgId) {
+  if (privateMsgId != null) {
     // asynchronously send all missed direct msg by offset
     sendAllMissedPrivateMsg(socket, privateMsgId, privateMsgOffset)
     // handle receiving new private msg
@@ -156,9 +156,10 @@ async function sendAllMissedPrivateMsg (socket, privateMsgId, offset) {
 }
 
 async function sendAllMissedRoomMsg (socket, roomId, offset) {
-  if (!offset) {
+  if (offset == null || !Number.isInteger(offset)) {
     offset = 0
   }
+  console.log("room msg offset:", offset)
   const privateMsgInitEvent = buildInitRoomMsgEvent(roomId)
   const allMissedMsg = await fetchAllMissedRoomMsg(parseInt(roomId), parseInt(offset))
   if (!allMissedMsg) {

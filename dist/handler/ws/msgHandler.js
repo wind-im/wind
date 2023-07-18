@@ -127,7 +127,7 @@ function wsOnConnect(socket) {
                 console.log(email + ' disconnected. for reason:' + reason);
             });
             // if it's private msg, then send all missed direct msg
-            if (privateMsgId) {
+            if (privateMsgId != null) {
                 // asynchronously send all missed direct msg by offset
                 sendAllMissedPrivateMsg(socket, privateMsgId, privateMsgOffset);
                 // handle receiving new private msg
@@ -246,9 +246,10 @@ function sendAllMissedRoomMsg(socket, roomId, offset) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!offset) {
+                    if (offset == null || !Number.isInteger(offset)) {
                         offset = 0;
                     }
+                    console.log("room msg offset:", offset);
                     privateMsgInitEvent = buildInitRoomMsgEvent(roomId);
                     return [4 /*yield*/, (0, roomService_1.fetchAllMissedRoomMsg)(parseInt(roomId), parseInt(offset))];
                 case 1:

@@ -83,6 +83,7 @@ var friendHandler_1 = require("./handler/http/friendHandler");
 var channelHandler_1 = require("./handler/http/channelHandler");
 var roomMsgHandler_1 = require("./handler/http/roomMsgHandler");
 var userService_1 = require("./service/user/userService");
+var windConfig_1 = require("./utils/windConfig");
 dotenv_1["default"].config();
 var FRONTEND_HOST = process.env.FRONTEND_HOST;
 var app = (0, express_1["default"])();
@@ -121,7 +122,7 @@ app.use((0, cors_1["default"])(corsOptions))
     .get('/api/channel', authUtils_1.loginValidator, channelHandler_1.channelGet)
     .get('/api/channelList', authUtils_1.loginValidator, channelHandler_1.channelListGet)
     .post('/api/channel/join', authUtils_1.loginValidator, channelHandler_1.channelJoinPost)
-    .get('/api/channel/channelUserInfo', authUtils_1.loginValidator, channelHandler_1.channelUserInfo)
+    .get('/api/channel/channelUserInfo', authUtils_1.loginValidator, channelHandler_1.channelUserInfoGet)
     .post('/api/channel/delete', authUtils_1.loginValidator, channelHandler_1.channelDelete)
     .get('/api/roomList', authUtils_1.loginValidator, roomMsgHandler_1.roomListGet)
     .get('/api/room', authUtils_1.loginValidator, roomMsgHandler_1.roomGet)
@@ -135,6 +136,7 @@ app.use((0, cors_1["default"])(corsOptions))
     .get('/api/onlineHeartbeat', authUtils_1.loginValidator, userHandler_1.onlineHeartbeatGet)
     .get('/api/batchCheckUserOnline', authUtils_1.loginValidator, userHandler_1.batchCheckUserOnlineGet)
     .get('/api/channelInviteUrl', authUtils_1.loginValidator, channelHandler_1.channelInviteGet)
+    // test only
     .get('/api/ts', authUtils_1.loginValidator, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, _b;
     var _c;
@@ -150,6 +152,9 @@ app.use((0, cors_1["default"])(corsOptions))
         }
     });
 }); })
+    .get('/api/module', function (req, res) {
+    res.json({ data: windConfig_1.myObject });
+})
     .use(errorHandler_1.errorHandler); // for handling global error
 // ws service
 var io = new socket_io_1.Server(server, {

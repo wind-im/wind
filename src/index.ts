@@ -21,6 +21,7 @@ import { friendGet, onlineFriendsGet } from './handler/http/friendHandler'
 import { channelListGet, channelJoinPost, channelPost, channelUserInfoGet, channelDelete, channelGet, beOnlineInChannel, beOfflineInChannel, channelInviteGet } from './handler/http/channelHandler'
 import { roomGet, roomListGet } from './handler/http/roomMsgHandler'
 import { testPromiseWithTs } from './service/user/userService'
+import { myObject } from './utils/windConfig'
 
 dotenv.config()
 const FRONTEND_HOST = process.env.FRONTEND_HOST
@@ -78,8 +79,12 @@ app.use(cors(corsOptions))
   .get('/api/onlineHeartbeat', loginValidator, onlineHeartbeatGet)
   .get('/api/batchCheckUserOnline', loginValidator, batchCheckUserOnlineGet)
   .get('/api/channelInviteUrl', loginValidator, channelInviteGet)
+  // test only
   .get('/api/ts', loginValidator, async (req, res) => {
     res.json({data: await testPromiseWithTs()})
+  })
+  .get('/api/module', (req, res) => {
+    res.json( { data: myObject})
   })
 
   .use(errorHandler) // for handling global error

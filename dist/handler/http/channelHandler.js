@@ -70,7 +70,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.channelInviteGet = exports.beOfflineInChannel = exports.beOnlineInChannel = exports.channelDelete = exports.channelUserInfo = exports.channelListGet = exports.channelJoinPost = exports.channelPost = exports.channelGet = void 0;
+exports.channelInviteGet = exports.beOfflineInChannel = exports.beOnlineInChannel = exports.channelDelete = exports.channelUserInfoGet = exports.channelListGet = exports.channelJoinPost = exports.channelPost = exports.channelGet = void 0;
 var channelService_1 = require("../../service/channel/channelService");
 var userService_1 = require("../../service/user/userService");
 var Boom = __importStar(require("@hapi/boom"));
@@ -185,7 +185,7 @@ function channelListGet(req, res, next) {
 }
 exports.channelListGet = channelListGet;
 // get all crew by channelId
-function channelUserInfo(req, res, next) {
+function channelUserInfoGet(req, res, next) {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
         var user, channelId, isUserInChannel, members, onlineMembers_1, membersResult_1, onlineUserCnt, offlineUserCnt, e_5;
@@ -230,7 +230,7 @@ function channelUserInfo(req, res, next) {
         });
     });
 }
-exports.channelUserInfo = channelUserInfo;
+exports.channelUserInfoGet = channelUserInfoGet;
 // delete channel
 function channelDelete(req, res, next) {
     return __awaiter(this, void 0, void 0, function () {

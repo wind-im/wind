@@ -108,9 +108,9 @@ app.use((0, cors_1["default"])(corsOptions))
     next(Boom.forbidden('hello Boom'));
 })
     .get('/api/whoami', authUtils_1.loginValidator, userHandler_1.whoami)
-    .get('/api/msg/privateMsgList', authUtils_1.loginValidator, msgHandler.privateMsgListGet)
-    .get('/api/msg/privateMsg', authUtils_1.loginValidator, msgHandler.privateMsgGet)
-    .post('/api/msg/privateMsg', authUtils_1.loginValidator, msgHandler.privateMsgPost)
+    .get('/api/msg/privateMsgList', authUtils_1.loginValidator, msgHandler.privateMsgInfoListGet)
+    .get('/api/msg/privateMsg', authUtils_1.loginValidator, msgHandler.privateMsgInfoGet)
+    .post('/api/msg/privateMsg', authUtils_1.loginValidator, msgHandler.privateMsgInfoPost)
     .post('/api/login', loginHandler_1.loginPost)
     .post('/api/signup', signupHandler_1.signupPost)
     .post('/api/logout', authUtils_1.loginValidator, logoutHandler_1.logoutPost)
@@ -136,6 +136,7 @@ app.use((0, cors_1["default"])(corsOptions))
     .get('/api/onlineHeartbeat', authUtils_1.loginValidator, userHandler_1.onlineHeartbeatGet)
     .get('/api/batchCheckUserOnline', authUtils_1.loginValidator, userHandler_1.batchCheckUserOnlineGet)
     .get('/api/channelInviteUrl', authUtils_1.loginValidator, channelHandler_1.channelInviteGet)
+    .get('/api/privateMsgByOffset', authUtils_1.loginValidator, msgHandler.getPrivateMsgByOffset)
     // test only
     .get('/api/ts', authUtils_1.loginValidator, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, _b;

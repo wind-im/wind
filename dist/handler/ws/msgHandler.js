@@ -129,7 +129,7 @@ function wsOnConnect(socket) {
             // if it's private msg, then send all missed direct msg
             if (privateMsgId != null) {
                 // asynchronously send all missed direct msg by offset
-                sendAllMissedPrivateMsg(socket, privateMsgId, privateMsgOffset);
+                // sendAllMissedPrivateMsg(socket, privateMsgId, privateMsgOffset)
                 // handle receiving new private msg
                 socket.on(privateMsgEvent, function (msg, ackFn) { return __awaiter(_this, void 0, void 0, function () {
                     var msgModel, msg2Send;
@@ -219,7 +219,7 @@ function sendAllMissedPrivateMsg(socket, privateMsgId, offset) {
                         offset = 0;
                     }
                     privateMsgInitEvent = buildInitPrivateMsgEvent(privateMsgId);
-                    return [4 /*yield*/, (0, msgService_1.fetchAllMissedPrivateMsg)(parseInt(privateMsgId), parseInt(offset))];
+                    return [4 /*yield*/, (0, msgService_1.fetchPrivateMsgsByOffset)(parseInt(privateMsgId), parseInt(offset))];
                 case 1:
                     allMissedMsg = _a.sent();
                     if (!allMissedMsg) {

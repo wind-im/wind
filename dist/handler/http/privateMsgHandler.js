@@ -59,12 +59,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.privateMsgGet = exports.privateMsgPost = exports.privateMsgListGet = void 0;
+exports.getPrivateMsgByOffset = exports.privateMsgInfoGet = exports.privateMsgInfoPost = exports.privateMsgInfoListGet = void 0;
 var friendService_1 = require("../../service/friend/friendService");
 var msgService_1 = require("../../service/msg/msgService");
 var Boom = __importStar(require("@hapi/boom"));
 // get private msg list
-function privateMsgListGet(req, res, next) {
+function privateMsgInfoListGet(req, res, next) {
     return __awaiter(this, void 0, void 0, function () {
         var user, wrappedData, _a, _b, e_1;
         return __generator(this, function (_c) {
@@ -74,7 +74,7 @@ function privateMsgListGet(req, res, next) {
                     user = req.windImUser;
                     _a = wrapPrivateMsg;
                     _b = [user.id];
-                    return [4 /*yield*/, (0, msgService_1.selectAllPrivateMsgByUid)(user.id)];
+                    return [4 /*yield*/, (0, msgService_1.selectAllPrivateMsgInfoByUid)(user.id)];
                 case 1:
                     wrappedData = _a.apply(void 0, _b.concat([_c.sent()]));
                     res.json({ data: wrappedData });
@@ -88,9 +88,9 @@ function privateMsgListGet(req, res, next) {
         });
     });
 }
-exports.privateMsgListGet = privateMsgListGet;
+exports.privateMsgInfoListGet = privateMsgInfoListGet;
 // create private msg
-function privateMsgPost(req, res, next) {
+function privateMsgInfoPost(req, res, next) {
     return __awaiter(this, void 0, void 0, function () {
         var user, fromUid, toUsernameAndTag, username, tag, remoteUser, toUid, _a, _b, e_2;
         var _c;
@@ -112,7 +112,7 @@ function privateMsgPost(req, res, next) {
                     toUid = remoteUser.id;
                     _b = (_a = res).json;
                     _c = {};
-                    return [4 /*yield*/, (0, msgService_1.createPrivateMsg)(fromUid, toUid)];
+                    return [4 /*yield*/, (0, msgService_1.createPrivateMsgInfo)(fromUid, toUid)];
                 case 2:
                     _b.apply(_a, [(_c.data = _d.sent(), _c)]);
                     return [3 /*break*/, 4];
@@ -125,9 +125,9 @@ function privateMsgPost(req, res, next) {
         });
     });
 }
-exports.privateMsgPost = privateMsgPost;
+exports.privateMsgInfoPost = privateMsgInfoPost;
 // get private msg by Id
-function privateMsgGet(req, res, next) {
+function privateMsgInfoGet(req, res, next) {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
         var user, msgId, msgInfo, e_3;
@@ -137,7 +137,7 @@ function privateMsgGet(req, res, next) {
                     _b.trys.push([0, 2, , 3]);
                     user = req.windImUser;
                     msgId = parseInt((_a = req.query) === null || _a === void 0 ? void 0 : _a.id);
-                    return [4 /*yield*/, (0, msgService_1.getPrivateMsgById)(msgId)];
+                    return [4 /*yield*/, (0, msgService_1.getPrivateMsgInfoById)(msgId)];
                 case 1:
                     msgInfo = _b.sent();
                     if (!msgInfo) {
@@ -161,7 +161,7 @@ function privateMsgGet(req, res, next) {
         });
     });
 }
-exports.privateMsgGet = privateMsgGet;
+exports.privateMsgInfoGet = privateMsgInfoGet;
 function wrapPrivateMsg(uid, allPrivateMsg) {
     return allPrivateMsg.map(function (m) {
         if (m.fromUid == uid) {
@@ -173,3 +173,32 @@ function wrapPrivateMsg(uid, allPrivateMsg) {
         return m;
     });
 }
+function getPrivateMsgByOffset(req, res, next) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function () {
+        var msgId, offset, privateMsg, e_4;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    _c.trys.push([0, 2, , 3]);
+                    msgId = parseInt((_a = req.query) === null || _a === void 0 ? void 0 : _a.id);
+                    offset = parseInt((_b = req.query) === null || _b === void 0 ? void 0 : _b.offset);
+                    if (msgId == null || offset == null) {
+                        throw Boom.badRequest("misId or offset == null");
+                    }
+                    return [4 /*yield*/, (0, msgService_1.fetchPrivateMsgsByOffset)(msgId, offset)];
+                case 1:
+                    privateMsg = _c.sent();
+                    console.log("#privateMsgByOffset msg:", JSON.stringify(privateMsg));
+                    res.json({ data: privateMsg });
+                    return [3 /*break*/, 3];
+                case 2:
+                    e_4 = _c.sent();
+                    next(e_4);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getPrivateMsgByOffset = getPrivateMsgByOffset;

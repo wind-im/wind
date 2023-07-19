@@ -36,10 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.getPrivateMsgById = exports.selectAllPrivateMsgByUid = exports.getExistedPrivateMsg = exports.fetchAllMissedPrivateMsg = exports.persistPrivateMsg = exports.getDestUserOfPrivateMsg = exports.createPrivateMsg = void 0;
+exports.getPrivateMsgInfoById = exports.selectAllPrivateMsgInfoByUid = exports.getExistedPrivateMsg = exports.fetchPrivateMsgsByOffset = exports.persistPrivateMsg = exports.getDestUserOfPrivateMsg = exports.createPrivateMsgInfo = void 0;
 var prismaHolder_1 = require("../../utils/prismaHolder");
 var privateMsgType = 0;
-function createPrivateMsg(fromUid, toUid) {
+function createPrivateMsgInfo(fromUid, toUid) {
     return __awaiter(this, void 0, void 0, function () {
         var privateMsgExisted;
         return __generator(this, function (_a) {
@@ -69,7 +69,7 @@ function createPrivateMsg(fromUid, toUid) {
         });
     });
 }
-exports.createPrivateMsg = createPrivateMsg;
+exports.createPrivateMsgInfo = createPrivateMsgInfo;
 function getDestUserOfPrivateMsg(privateMsgId, uid) {
     return __awaiter(this, void 0, void 0, function () {
         var privateMsg, e_1;
@@ -156,13 +156,17 @@ function persistPrivateMsg(privateMsgId, fromUid, toUid, content) {
     });
 }
 exports.persistPrivateMsg = persistPrivateMsg;
-function fetchAllMissedPrivateMsg(privateMsgId, offset) {
+// paging by id, limit
+function fetchPrivateMsgsByOffset(privateMsgId, offset) {
     return __awaiter(this, void 0, void 0, function () {
-        var e_3;
+        var pageSize, e_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
+                    pageSize = 20;
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
                     return [4 /*yield*/, prismaHolder_1.prisma.message.findMany({
                             select: {
                                 id: true,
@@ -176,24 +180,28 @@ function fetchAllMissedPrivateMsg(privateMsgId, offset) {
                                 toUid: true,
                                 content: true
                             },
+                            take: pageSize,
+                            orderBy: {
+                                id: 'asc'
+                            },
                             where: {
                                 id: {
-                                    gt: offset
+                                    lt: offset
                                 },
                                 privateMsgId: privateMsgId
                             }
                         })];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2:
+                case 2: return [2 /*return*/, _a.sent()];
+                case 3:
                     e_3 = _a.sent();
                     console.log(e_3);
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     });
 }
-exports.fetchAllMissedPrivateMsg = fetchAllMissedPrivateMsg;
+exports.fetchPrivateMsgsByOffset = fetchPrivateMsgsByOffset;
 function getExistedPrivateMsg(fromUid, toUid) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -222,7 +230,7 @@ function getExistedPrivateMsg(fromUid, toUid) {
     });
 }
 exports.getExistedPrivateMsg = getExistedPrivateMsg;
-function selectAllPrivateMsgByUid(uid) {
+function selectAllPrivateMsgInfoByUid(uid) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -247,8 +255,8 @@ function selectAllPrivateMsgByUid(uid) {
         });
     });
 }
-exports.selectAllPrivateMsgByUid = selectAllPrivateMsgByUid;
-function getPrivateMsgById(msgId) {
+exports.selectAllPrivateMsgInfoByUid = selectAllPrivateMsgInfoByUid;
+function getPrivateMsgInfoById(msgId) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -270,4 +278,4 @@ function getPrivateMsgById(msgId) {
         });
     });
 }
-exports.getPrivateMsgById = getPrivateMsgById;
+exports.getPrivateMsgInfoById = getPrivateMsgInfoById;

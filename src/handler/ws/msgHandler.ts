@@ -30,7 +30,7 @@ function buildRoomMsgEvent (roomId) {
 }
 
 // init room msg event
-export function buildInitRoomMsgEvent (roomId) {
+export function buildRoomMsgInitEvent (roomId) {
   return 'roomMsgInitEvent_' + roomId
 }
 
@@ -99,7 +99,7 @@ export async function wsOnConnect (socket) {
       // broadcast: exclude the sender ws
       socket.broadcast.emit(privateMsgEvent, msg2Send)
     })
-  } else if (roomId) {
+  } else if (roomId != null) {
     // asynchronously send all missed room msg by offset
     sendAllMissedRoomMsg(socket, roomId, roomMsgOffset)
     // handle receiving new room msg
@@ -156,12 +156,13 @@ async function sendAllMissedPrivateMsg (socket, privateMsgId, offset) {
 }
 
 async function sendAllMissedRoomMsg (socket, roomId, offset) {
-  if (offset == null || !Number.isInteger(offset)) {
+  if (offset == null) {
     offset = 0
   }
   console.log("room msg offset:", offset)
-  const privateMsgInitEvent = buildInitRoomMsgEvent(roomId)
+  const privateMsgInitEvent = buildRoomMsgInitEvent(roomId)
   const allMissedMsg = await fetchAllMissedRoomMsg(parseInt(roomId), parseInt(offset))
+  console.log("offset:", offset, " msg:", JSON.stringify(allMissedMsg))
   if (!allMissedMsg) {
     return
   }

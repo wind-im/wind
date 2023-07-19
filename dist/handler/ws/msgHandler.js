@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.wsOnConnect = exports.wsAuthMiddleware = exports.buildInitRoomMsgEvent = exports.buildInitPrivateMsgEvent = void 0;
+exports.wsOnConnect = exports.wsAuthMiddleware = exports.buildRoomMsgInitEvent = exports.buildInitPrivateMsgEvent = void 0;
 var cookie_1 = __importDefault(require("cookie"));
 var authUtils_1 = require("../../utils/authUtils");
 var msgService_1 = require("../../service/msg/msgService");
@@ -58,10 +58,10 @@ function buildRoomMsgEvent(roomId) {
     return 'roomMsgEvent_' + roomId;
 }
 // init room msg event
-function buildInitRoomMsgEvent(roomId) {
+function buildRoomMsgInitEvent(roomId) {
     return 'roomMsgInitEvent_' + roomId;
 }
-exports.buildInitRoomMsgEvent = buildInitRoomMsgEvent;
+exports.buildRoomMsgInitEvent = buildRoomMsgInitEvent;
 // Middleware to attach msgId and user info
 function wsAuthMiddleware(socket, next) {
     var _a, _b, _c, _d, _e, _f;
@@ -156,7 +156,7 @@ function wsOnConnect(socket) {
                     });
                 }); });
             }
-            else if (roomId) {
+            else if (roomId != null) {
                 // asynchronously send all missed room msg by offset
                 sendAllMissedRoomMsg(socket, roomId, roomMsgOffset);
                 // handle receiving new room msg
@@ -246,14 +246,15 @@ function sendAllMissedRoomMsg(socket, roomId, offset) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (offset == null || !Number.isInteger(offset)) {
+                    if (offset == null) {
                         offset = 0;
                     }
                     console.log("room msg offset:", offset);
-                    privateMsgInitEvent = buildInitRoomMsgEvent(roomId);
+                    privateMsgInitEvent = buildRoomMsgInitEvent(roomId);
                     return [4 /*yield*/, (0, roomService_1.fetchAllMissedRoomMsg)(parseInt(roomId), parseInt(offset))];
                 case 1:
                     allMissedMsg = _a.sent();
+                    console.log("offset:", offset, " msg:", JSON.stringify(allMissedMsg));
                     if (!allMissedMsg) {
                         return [2 /*return*/];
                     }

@@ -176,7 +176,7 @@ function wrapPrivateMsg(uid, allPrivateMsg) {
 function getPrivateMsgByOffset(req, res, next) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
-        var msgId, offset, privateMsg, e_4;
+        var msgId, offset, privateMsgList, privateMsgListVO, e_4;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
@@ -188,9 +188,21 @@ function getPrivateMsgByOffset(req, res, next) {
                     }
                     return [4 /*yield*/, (0, msgService_1.fetchPrivateMsgsByOffset)(msgId, offset)];
                 case 1:
-                    privateMsg = _c.sent();
-                    console.log("#privateMsgByOffset msg:", JSON.stringify(privateMsg));
-                    res.json({ data: privateMsg });
+                    privateMsgList = _c.sent();
+                    if (!privateMsgList) {
+                        return [2 /*return*/];
+                    }
+                    privateMsgListVO = privateMsgList.map(function (m) {
+                        var msg2Send = {
+                            id: m.id,
+                            content: m.content,
+                            senderUsername: m.fromUidRel.username,
+                            createdAt: m.createdAt
+                        };
+                        return msg2Send;
+                    });
+                    console.log("#privateMsgByOffset offset:", offset, " msg:", JSON.stringify(privateMsgList));
+                    res.json({ data: privateMsgListVO });
                     return [3 /*break*/, 3];
                 case 2:
                     e_4 = _c.sent();

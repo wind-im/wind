@@ -159,14 +159,16 @@ exports.persistPrivateMsg = persistPrivateMsg;
 // paging by id, limit
 function fetchPrivateMsgsByOffset(privateMsgId, offset) {
     return __awaiter(this, void 0, void 0, function () {
-        var pageSize, e_3;
+        var pageSize, isFirstQuery, e_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     pageSize = 20;
+                    isFirstQuery = offset == -1;
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    _a.trys.push([1, 5, , 6]);
+                    if (!isFirstQuery) return [3 /*break*/, 3];
                     return [4 /*yield*/, prismaHolder_1.prisma.message.findMany({
                             select: {
                                 id: true,
@@ -182,21 +184,44 @@ function fetchPrivateMsgsByOffset(privateMsgId, offset) {
                             },
                             take: pageSize,
                             orderBy: {
-                                id: 'asc'
+                                id: 'desc'
                             },
                             where: {
-                                id: {
-                                    lt: offset
-                                },
                                 privateMsgId: privateMsgId
                             }
                         })];
                 case 2: return [2 /*return*/, _a.sent()];
-                case 3:
+                case 3: return [4 /*yield*/, prismaHolder_1.prisma.message.findMany({
+                        select: {
+                            id: true,
+                            fromUid: true,
+                            fromUidRel: {
+                                select: {
+                                    username: true
+                                }
+                            },
+                            createdAt: true,
+                            toUid: true,
+                            content: true
+                        },
+                        take: pageSize,
+                        skip: 1,
+                        orderBy: {
+                            id: 'desc'
+                        },
+                        cursor: {
+                            id: offset
+                        },
+                        where: {
+                            privateMsgId: privateMsgId
+                        }
+                    })];
+                case 4: return [2 /*return*/, _a.sent()];
+                case 5:
                     e_3 = _a.sent();
                     console.log(e_3);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
             }
         });
     });

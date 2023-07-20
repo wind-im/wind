@@ -85,7 +85,31 @@ export async function persistPrivateMsg(privateMsgId, fromUid, toUid, content) {
 // paging by id, limit
 export async function fetchPrivateMsgsByOffset(privateMsgId: number, offset: number) {
   let pageSize = 20
+  let isFirstQuery = offset == -1
   try {
+    if (isFirstQuery) {
+      return await prisma.message.findMany({
+        select: {
+          id: true,
+          fromUid: true,
+          fromUidRel: {
+            select: {
+              username: true
+            }
+          },
+          createdAt: true,
+          toUid: true,
+          content: true
+        },
+        take: pageSize,
+        orderBy: {
+          id: 'desc',
+        },
+        where: {
+          privateMsgId
+        }
+      })
+    }
     return await prisma.message.findMany({
       select: {
         id: true,
@@ -100,13 +124,14 @@ export async function fetchPrivateMsgsByOffset(privateMsgId: number, offset: num
         content: true
       },
       take: pageSize,
+      skip: 1,
       orderBy: {
-        id: 'asc',
+        id: 'desc',
+      },
+      cursor: {
+        id: offset
       },
       where: {
-        id: {
-          lt: offset
-        },
         privateMsgId
       }
     })

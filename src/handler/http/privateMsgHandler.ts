@@ -73,9 +73,22 @@ export async function getPrivateMsgByOffset(req, res, next) {
     if (msgId == null || offset == null) {
       throw Boom.badRequest("misId or offset == null")
     }
-    const privateMsg = await fetchPrivateMsgsByOffset(msgId, offset)
-    console.log("#privateMsgByOffset msg:", JSON.stringify(privateMsg))
-    res.json({ data: privateMsg })
+    let privateMsgList = await fetchPrivateMsgsByOffset(msgId, offset)
+    if (!privateMsgList) {
+      return
+    }
+    let privateMsgListVO = privateMsgList.map(m => {
+      const msg2Send = {
+        id: m.id,
+        content: m.content,
+        senderUsername: m.fromUidRel.username,
+        createdAt: m.createdAt
+      }
+      return msg2Send
+    })
+
+    console.log("#privateMsgByOffset offset:", offset, " msg:", JSON.stringify(privateMsgList))
+    res.json({ data: privateMsgListVO })
   } catch (e) {
     next(e)
   }

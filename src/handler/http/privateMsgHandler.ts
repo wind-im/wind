@@ -1,12 +1,12 @@
 import { getUserByEmail, getUserByUsernameAndTag } from '@/service/friend/friendService'
-import { selectAllPrivateMsgByUid, createPrivateMsg, getPrivateMsgById } from '@/service/msg/msgService'
+import { selectAllPrivateMsgInfoByUid, createPrivateMsgInfo, getPrivateMsgInfoById, fetchPrivateMsgsByOffset } from '@/service/msg/msgService'
 import * as Boom from '@hapi/boom'
 
 // get private msg list
-export async function privateMsgListGet (req, res, next) {
+export async function privateMsgInfoListGet(req, res, next) {
   try {
     const user = req.windImUser
-    const wrappedData = wrapPrivateMsg(user.id, await selectAllPrivateMsgByUid(user.id))
+    const wrappedData = wrapPrivateMsg(user.id, await selectAllPrivateMsgInfoByUid(user.id))
     res.json({ data: wrappedData })
   } catch (e) {
     next(e)
@@ -14,7 +14,7 @@ export async function privateMsgListGet (req, res, next) {
 }
 
 // create private msg
-export async function privateMsgPost (req, res, next) {
+export async function privateMsgInfoPost(req, res, next) {
   try {
     const user = req.windImUser
     const fromUid = user.id
@@ -27,18 +27,18 @@ export async function privateMsgPost (req, res, next) {
     }
     const toUid = remoteUser.id
 
-    res.json({ data: await createPrivateMsg(fromUid, toUid) })
+    res.json({ data: await createPrivateMsgInfo(fromUid, toUid) })
   } catch (e) {
     next(e)
   }
 }
 
 // get private msg by Id
-export async function privateMsgGet (req, res, next) {
+export async function privateMsgInfoGet(req, res, next) {
   try {
     const user = req.windImUser
     const msgId = parseInt(req.query?.id)
-    const msgInfo: any = await getPrivateMsgById(msgId)
+    const msgInfo: any = await getPrivateMsgInfoById(msgId)
     if (!msgInfo) {
       throw Boom.badRequest('No such msg.')
     }
@@ -54,7 +54,7 @@ export async function privateMsgGet (req, res, next) {
   }
 }
 
-function wrapPrivateMsg (uid, allPrivateMsg) {
+function wrapPrivateMsg(uid, allPrivateMsg) {
   return allPrivateMsg.map(m => {
     if (m.fromUid == uid) {
       m.msgTitle = m.toUidRel.username + '#' + m.toUidRel.tag
@@ -63,4 +63,33 @@ function wrapPrivateMsg (uid, allPrivateMsg) {
     }
     return m
   })
+}
+
+export async function getPrivateMsgByOffset(req, res, next) {
+  try {
+    // init offset is integer.Max
+    const msgId = parseInt(req.query?.id)
+    const offset = parseInt(req.query?.offset)
+    if (msgId == null || offset == null) {
+      throw Boom.badRequest("misId or offset == null")
+    }
+    let privateMsgList = await fetchPrivateMsgsByOffset(msgId, offset)
+    if (!privateMsgList) {
+      return
+    }
+    let privateMsgListVO = privateMsgList.map(m => {
+      const msg2Send = {
+        id: m.id,
+        content: m.content,
+        senderUsername: m.fromUidRel.username,
+        createdAt: m.createdAt
+      }
+      return msg2Send
+    })
+
+    console.log("#privateMsgByOffset offset:", offset, " msg:", JSON.stringify(privateMsgList))
+    res.json({ data: privateMsgListVO })
+  } catch (e) {
+    next(e)
+  }
 }

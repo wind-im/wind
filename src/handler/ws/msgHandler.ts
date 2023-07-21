@@ -2,7 +2,7 @@ import cookie from 'cookie'
 import { getUserFromCookieToken } from '@/utils/authUtils'
 
 import type { User } from '@/utils/authUtils'
-import { getDestUserOfPrivateMsg, persistPrivateMsg, fetchAllMissedPrivateMsg } from '@/service/msg/msgService'
+import { getDestUserOfPrivateMsg, persistPrivateMsg, fetchPrivateMsgsByOffset } from '@/service/msg/msgService'
 import { fetchAllMissedRoomMsg, persistRoomMsg } from '@/service/room/roomService'
 
 // Websocket Message Service
@@ -81,7 +81,7 @@ export async function wsOnConnect (socket) {
   // if it's private msg, then send all missed direct msg
   if (privateMsgId != null) {
     // asynchronously send all missed direct msg by offset
-    sendAllMissedPrivateMsg(socket, privateMsgId, privateMsgOffset)
+    // sendAllMissedPrivateMsg(socket, privateMsgId, privateMsgOffset)
     // handle receiving new private msg
     socket.on(privateMsgEvent, async (msg, ackFn) => {
       const msgModel = await persistPrivateMsg(parseInt(privateMsgId), user.id, toUid, msg.content)
@@ -138,7 +138,7 @@ async function sendAllMissedPrivateMsg (socket, privateMsgId, offset) {
     offset = 0
   }
   const privateMsgInitEvent = buildInitPrivateMsgEvent(privateMsgId)
-  const allMissedMsg = await fetchAllMissedPrivateMsg(parseInt(privateMsgId), parseInt(offset))
+  const allMissedMsg = await fetchPrivateMsgsByOffset(parseInt(privateMsgId), parseInt(offset))
   if (!allMissedMsg) {
     return
   }

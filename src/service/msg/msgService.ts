@@ -2,7 +2,7 @@ import { prisma } from '../../utils/prismaHolder'
 
 const privateMsgType = 0
 
-export async function createPrivateMsg (fromUid, toUid) {
+export async function createPrivateMsgInfo(fromUid, toUid) {
   if (!fromUid || !toUid || fromUid == toUid) {
     return { error: 'Invalid params' }
   }
@@ -24,7 +24,7 @@ export async function createPrivateMsg (fromUid, toUid) {
   })
 }
 
-export async function getDestUserOfPrivateMsg (privateMsgId, uid) {
+export async function getDestUserOfPrivateMsg(privateMsgId, uid) {
   if (Number.isNaN(parseInt(privateMsgId))) {
     return null
   }
@@ -52,7 +52,7 @@ export async function getDestUserOfPrivateMsg (privateMsgId, uid) {
   }
 }
 
-export async function persistPrivateMsg (privateMsgId, fromUid, toUid, content) {
+export async function persistPrivateMsg(privateMsgId, fromUid, toUid, content) {
   try {
     return await prisma.message.create({
       data: {
@@ -82,8 +82,34 @@ export async function persistPrivateMsg (privateMsgId, fromUid, toUid, content) 
   }
 }
 
-export async function fetchAllMissedPrivateMsg (privateMsgId, offset) {
+// paging by id, limit
+export async function fetchPrivateMsgsByOffset(privateMsgId: number, offset: number) {
+  let pageSize = 20
+  let isFirstQuery = offset == -1
   try {
+    if (isFirstQuery) {
+      return await prisma.message.findMany({
+        select: {
+          id: true,
+          fromUid: true,
+          fromUidRel: {
+            select: {
+              username: true
+            }
+          },
+          createdAt: true,
+          toUid: true,
+          content: true
+        },
+        take: pageSize,
+        orderBy: {
+          id: 'desc',
+        },
+        where: {
+          privateMsgId
+        }
+      })
+    }
     return await prisma.message.findMany({
       select: {
         id: true,
@@ -97,10 +123,15 @@ export async function fetchAllMissedPrivateMsg (privateMsgId, offset) {
         toUid: true,
         content: true
       },
+      take: pageSize,
+      skip: 1,
+      orderBy: {
+        id: 'desc',
+      },
+      cursor: {
+        id: offset
+      },
       where: {
-        id: {
-          gt: offset
-        },
         privateMsgId
       }
     })
@@ -109,7 +140,7 @@ export async function fetchAllMissedPrivateMsg (privateMsgId, offset) {
   }
 }
 
-export async function getExistedPrivateMsg (fromUid, toUid) {
+export async function getExistedPrivateMsg(fromUid, toUid) {
   return await prisma.privateMsg.findMany({
     where: {
       OR: [
@@ -130,7 +161,7 @@ export async function getExistedPrivateMsg (fromUid, toUid) {
   })
 }
 
-export async function selectAllPrivateMsgByUid (uid: number) {
+export async function selectAllPrivateMsgInfoByUid(uid: number) {
   return await prisma.privateMsg.findMany({
     where: {
       OR: [
@@ -149,7 +180,7 @@ export async function selectAllPrivateMsgByUid (uid: number) {
   })
 }
 
-export async function getPrivateMsgById (msgId) {
+export async function getPrivateMsgInfoById(msgId) {
   if (Number.isNaN(parseInt(msgId))) {
     return null
   }
